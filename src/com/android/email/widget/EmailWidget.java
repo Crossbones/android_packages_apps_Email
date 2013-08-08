@@ -239,8 +239,8 @@ public class EmailWidget implements RemoteViewsService.RemoteViewsFactory,
     private Intent getOpenMessageIntent(final Context context, final long messageId,
             final long mailboxId) {
         Mailbox mailbox = Mailbox.restoreMailboxWithId(context, mailboxId);
-        return Welcome.createOpenMessageIntent(context, mailbox.mAccountKey,
-                        mailboxId, messageId);
+        return (mailbox == null) ? null : Welcome.createOpenMessageIntent(context,
+                mailbox.mAccountKey, mailboxId, messageId);
     }
 
     private void setTextViewTextAndDesc(RemoteViews views, final int id, String text) {
@@ -286,7 +286,8 @@ public class EmailWidget implements RemoteViewsService.RemoteViewsFactory,
 
         if (isCursorValid()) {
             // Show compose icon & message list
-            if (mAccountId == Account.ACCOUNT_ID_COMBINED_VIEW) {
+            if (mAccountId == Account.ACCOUNT_ID_COMBINED_VIEW
+                || Account.restoreAccountWithId(mContext, mAccountId) == null) {
                 // Don't allow compose for "combined" view
                 views.setViewVisibility(R.id.widget_compose, View.INVISIBLE);
             } else {
